@@ -1,0 +1,16 @@
+.idea/
+*.iml
+
+# Python
+pycache/
+.pytest_cache/
+*.py[cod]
+.venv/
+venv/
+.env
+*.pyo
+*.log
+logs/
+var/log/
+*.tmp
+*.temp
