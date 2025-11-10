@@ -14,4 +14,3 @@ logs/
 var/log/
 *.tmp
 *.temp
-.idea/workspace.xml
