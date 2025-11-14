@@ -1,47 +1,60 @@
 import random
-
-import requests
 from faker import Faker
+
+from services.auth.helpers.authorization_helper import AuthorizationHelper
+from services.university.helpers.group_helper import GroupHelper
+from services.university.helpers.student_helper import StudentHelper
+from services.auth.helpers.user_helper import UserHelper
+from utils.api_utils import ApiUtils
 
 AUTH_URL = "http://127.0.0.1:8000"
 UNIVERSITY_URL = "http://127.0.0.1:8001"
 
-REGISTER_ENDPOINT = "/auth/register/"
-LOGIN_ENDPOINT = "/auth/login/"
-ME_ENDPOINT = "/users/me/"
-GROUPS_ENDPOINT = "/groups/"
-STUDENTS_ENDPOINT = "/students/"
+REGISTER_ENDPOINT = "auth/register/"
+LOGIN_ENDPOINT = "auth/login/"
+ME_ENDPOINT = "users/me/"
+GROUPS_ENDPOINT = "groups/"
+STUDENTS_ENDPOINT = "students/"
 
 faker = Faker()
 
 username = faker.user_name()
 password = faker.word() + "!$<1"
+authorization_helper = AuthorizationHelper(api_utils=ApiUtils(AUTH_URL))
 
-response_register = requests.post(AUTH_URL + REGISTER_ENDPOINT, data={"username": username,
-                                                                      "password": password,
-                                                                      "password_repeat": password,
-                                                                      "email": faker.email()})
+response = authorization_helper.post_register(
+    data={"username": username,
+          "password": password,
+          "password_repeat": password,
+          "email": faker.email()})
 
-response_password = requests.post(AUTH_URL + LOGIN_ENDPOINT, data={"username": username,
-                                                                   "password": password,
-                                                                   })
+response = authorization_helper.post_login(
+    data={"username": username,
+          "password": password,
+          })
 
-access_token = response_password.json()["access_token"]
+access_token = response.json()["access_token"]
 
-response_token = requests.get(AUTH_URL + ME_ENDPOINT, headers={"Authorization": f"Bearer {access_token}"})
+admin_auth_api_utils = ApiUtils(AUTH_URL, headers={"Authorization": f"Bearer {access_token}"})
+user_admin_helper = UserHelper(admin_auth_api_utils)
 
-response_group = requests.post(UNIVERSITY_URL + GROUPS_ENDPOINT, json={"name": faker.name()},
-                               headers={"Authorization": f"Bearer {access_token}"})
+admin_university_api_utils = ApiUtils(UNIVERSITY_URL, headers={"Authorization": f"Bearer {access_token}"})
 
-response = requests.post(UNIVERSITY_URL + STUDENTS_ENDPOINT, json={"first_name": faker.first_name(),
-                                                                   "last_name": faker.last_name(),
-                                                                   "email": faker.email(),
-                                                                   "degree": random.choice(["Associate",
-                                                                                            "Bachelor",
-                                                                                            "Master",
-                                                                                            "Doctorate"]),
-                                                                   "phone": faker.numerify("+798968565109"),
-                                                                   "group_id": response_group.json()["id"], },
-                         headers={"Authorization": f"Bearer {access_token}"})
-print(response.status_code)
-print(response.json())
+group_admin_helper = GroupHelper(admin_university_api_utils)
+student_admin_helper = StudentHelper(admin_university_api_utils)
+
+response_token = user_admin_helper.get_me()
+
+response_group = group_admin_helper.post_group(
+    json={"name": faker.name()})
+
+response = student_admin_helper.post_student(
+    json={"first_name": faker.first_name(),
+          "last_name": faker.last_name(),
+          "email": faker.email(),
+          "degree": random.choice(["Associate",
+                                   "Bachelor",
+                                   "Master",
+                                   "Doctorate"]),
+          "phone": faker.numerify("+798968565109"),
+          "group_id": response_group.json()["id"], })
