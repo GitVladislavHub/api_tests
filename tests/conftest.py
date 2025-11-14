@@ -3,7 +3,7 @@ import time
 import pytest
 import requests
 
-from main import response
+
 from services.auth.auth_service import AuthService
 from services.auth.models.login_request import LoginRequest
 from services.auth.models.register_request import RegisterRequest
