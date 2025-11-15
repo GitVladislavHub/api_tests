@@ -10,16 +10,17 @@ fake = Faker()
 
 
 class TestTeacherCreate:
-    def test_create_teacher(self, university_api_utils_admin):
+    def test_verification_teacher(self, university_api_utils_admin):
         Logger.info("### Step 1. Create teacher")
         university_service = UniversityService(api_utils=university_api_utils_admin)
-        teacher = TeacherRequest(
+        teacher_data = TeacherRequest(
             first_name=fake.first_name(),
             last_name=fake.last_name(),
             subject=random.choice([subject for subject in SubjectEnum])
         )
 
-        teacher_response = university_service.create_teacher(teacher_request=teacher)
+        teacher_response = university_service.create_teacher(teacher_request=teacher_data)
 
-        assert teacher_response.first_name == teacher.first_name
-        assert teacher_response.last_name == teacher.last_name
+        assert teacher_response.first_name == teacher_data.first_name
+        assert teacher_response.last_name == teacher_data.last_name
+        assert teacher_response.subject == teacher_data.subject

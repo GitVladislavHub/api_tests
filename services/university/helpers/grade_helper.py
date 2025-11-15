@@ -7,8 +7,8 @@ class GradeHelper(BaseHelper):
     ENDPOINT_PREFIX = "/grades"
     ROOT_ENDPOINT = f"{ENDPOINT_PREFIX}/"
 
-    def post_grade(self, json: dict) -> requests.Response:
-        response = self.api_utils.post(self.ROOT_ENDPOINT, json=json)
+    def post_grade(self, data: dict) -> requests.Response:
+        response = self.api_utils.post(self.ROOT_ENDPOINT, data=data)
         return response
 
     def get_grade(self, json: dict) -> requests.Response:
