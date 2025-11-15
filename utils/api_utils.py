@@ -37,3 +37,13 @@ class ApiUtils:
     def post(self, endpoint_url, data=None, json=None, **kwargs):
         response = self.session.post(self.url + endpoint_url, data, json, **kwargs)
         return response
+
+    @log_response
+    def put(self, endpoint_url, data=None, json=None, **kwargs):
+        response = self.session.put(url=endpoint_url, data=data, json=json, **kwargs)
+        return response
+
+    @log_response
+    def delete(self, endpoint_url, **kwargs):
+        response = self.session.delete(url=endpoint_url, **kwargs)
+        return response
