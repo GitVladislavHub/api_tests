@@ -14,8 +14,8 @@ class TestGradeCreate:
     def test_create_grade_anonym(self, university_api_utils_anonym):
         grade_helper = GradeHelper(university_api_utils_anonym)
         response = grade_helper.post_grade(GradeRequest(
-            teacher_id=faker.random_int(min=1, max=10),
-            student_id=faker.random_int(min=1, max=10),
+            teacher_id=1,
+            student_id=1,
             grade=random.randint(GRADE_MIN, GRADE_MAX)).model_dump())
 
         assert response.status_code == requests.status_codes.codes.unauthorized, \
@@ -25,8 +25,8 @@ class TestGradeCreate:
     def test_create_grade_admin(self, university_api_utils_admin):
         grade_helper = GradeHelper(university_api_utils_admin)
         response = grade_helper.post_grade(GradeRequest(
-            teacher_id=faker.random_int(min=1, max=10),
-            student_id=faker.random_int(min=1, max=10),
+            teacher_id=1,
+            student_id=1,
             grade=random.randint(GRADE_MIN, GRADE_MAX)).model_dump())
 
         assert response.status_code == requests.status_codes.codes.created, \
