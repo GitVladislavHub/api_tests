@@ -8,23 +8,23 @@ from services.university.models.group_request import GroupRequest
 from services.university.models.student_request import StudentRequest
 from services.university.university_service import UniversityService
 
-faker = Faker()
+fake = Faker()
 
 
 class TestStudentCreate:
     def test_student_create(self, university_api_utils_admin):
         Logger.info("### Step 1. Create group")
         university_service = UniversityService(api_utils=university_api_utils_admin)
-        group = GroupRequest(name=faker.name())
+        group = GroupRequest(name=fake.name())
         group_response = university_service.create_group(group)
 
         Logger.info("### Step 2. Create student")
         student = StudentRequest(
-            first_name=faker.first_name(),
-            last_name=faker.last_name(),
-            email=faker.email(),
+            first_name=fake.first_name(),
+            last_name=fake.last_name(),
+            email=fake.email(),
             degree=random.choice([option for option in DegreeEnum]),
-            phone=faker.numerify("+7##########"),
+            phone=fake.numerify("+7##########"),
             group_id=group_response.id
         )
 

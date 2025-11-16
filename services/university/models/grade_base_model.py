@@ -1,15 +1,7 @@
-from enum import Enum
+from pydantic import BaseModel, ConfigDict, Field
 
-from pydantic import BaseModel, ConfigDict
-
-
-class GradeEnum(Enum):
-    ZERO = 0
-    ONE = 1
-    TWO = 2
-    THREE = 3
-    FOUR = 4
-    FIVE = 5
+GRADE_MIN = 0
+GRADE_MAX = 5
 
 
 class GradeBaseModel(BaseModel):
@@ -17,4 +9,5 @@ class GradeBaseModel(BaseModel):
 
     teacher_id: int
     student_id: int
-    grade: GradeEnum
+    grade: int = Field(ge=GRADE_MIN, le=GRADE_MAX)
+

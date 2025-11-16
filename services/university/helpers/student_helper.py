@@ -9,5 +9,5 @@ class StudentHelper(BaseHelper):
     ROOT_ENDPOINT = f"{ENDPOINT_PREFIX}/"
 
     def post_student(self, json: dict) -> requests.Response:
-        response = self.api_utils.get(self.ROOT_ENDPOINT, json=json)
+        response = self.api_utils.post(self.ROOT_ENDPOINT, json=json)
         return response
