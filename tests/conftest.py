@@ -3,7 +3,6 @@ import time
 import pytest
 import requests
 
-
 from services.auth.auth_service import AuthService
 from services.auth.models.login_request import LoginRequest
 from services.auth.models.register_request import RegisterRequest
@@ -66,7 +65,23 @@ def auth_service_readiness():
         try:
             response = requests.get(AuthService.SERVICE_URL + "/docs")
             response.raise_for_status()
-        except:
+        except requests.exceptions.ConnectionError:
+            time.sleep(1)
+        else:
+            break
+    else:
+        raise RuntimeError(f"Auth service wasn't started during '{timeout}' seconds.' ")
+
+
+@pytest.fixture(scope="function", autouse=True)
+def university_service_readiness():
+    timeout = 180
+    start_time = time.time()
+    while time.time() < start_time + timeout:
+        try:
+            response = requests.get(UniversityService.SERVICE_URL + "/docs")
+            response.raise_for_status()
+        except requests.exceptions.ConnectionError:
             time.sleep(1)
         else:
             break

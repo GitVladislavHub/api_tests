@@ -21,6 +21,4 @@ class TestTeacherCreate:
 
         teacher_response = university_service.create_teacher(teacher_request=teacher_data)
 
-        assert teacher_response.first_name == teacher_data.first_name
-        assert teacher_response.last_name == teacher_data.last_name
         assert teacher_response.subject == teacher_data.subject

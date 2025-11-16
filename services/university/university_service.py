@@ -29,9 +29,9 @@ class UniversityService(BaseService):
         response = self.student_helper.post_student(json=student_request.model_dump())
         return StudentResponse(**response.json())
 
-    def create_random_student(self):
-        raise NotImplementedError
-
     def create_teacher(self, teacher_request: TeacherRequest) -> TeacherResponse:
         response = self.teacher_helper.post_teacher(json=teacher_request.model_dump())
         return TeacherResponse(**response.json())
+
+    def create_random_student(self):
+        raise NotImplementedError
