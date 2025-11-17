@@ -10,4 +10,3 @@ class GradeBaseModel(BaseModel):
     teacher_id: int
     student_id: int
     grade: int = Field(ge=GRADE_MIN, le=GRADE_MAX)
-
