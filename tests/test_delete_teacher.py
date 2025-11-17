@@ -5,7 +5,7 @@ from services.university.university_service import UniversityService
 
 class TestDeleteTeacher:
     def test_delete_teacher(self, university_api_utils_admin, create_teacher):
-        university_service = UniversityService(university_api_utils_admin, )
+        university_service = UniversityService(university_api_utils_admin)
         Logger.info("### Step 1.Create teacher ")
         teacher_id_to_delete_response = create_teacher.id
         Logger.info("### Step 2.Delete teacher ")

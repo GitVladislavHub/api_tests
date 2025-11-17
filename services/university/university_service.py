@@ -1,5 +1,3 @@
-from http.client import responses
-
 from services.general.base_service import BaseService
 from services.university.helpers.grade_helper import GradeHelper
 from services.university.helpers.group_helper import GroupHelper
@@ -42,6 +40,14 @@ class UniversityService(BaseService):
         response = self.teacher_helper.post_teacher(json=teacher_request.model_dump())
         return TeacherResponse(**response.json())
 
+    def delete_teacher(self, teacher_id: int) -> dict:
+        response = self.teacher_helper.delete_teacher(teacher_id=teacher_id)
+        return response.json()
+
+    def put_teacher(self, teacher_id: int, json: dict) -> dict:
+        response = self.teacher_helper.put_teacher(teacher_id=teacher_id, json=json)
+        return response.json()
+
     def create_grade(self, grade_request: GradeRequest) -> GradeResponse:
         response = self.grade_helper.post_grade(data=grade_request.model_dump())
         return GradeResponse(**response.json())
@@ -50,7 +56,6 @@ class UniversityService(BaseService):
         response = self.grade_helper.delete_grade(grade_id=grade_id)
         return response.json()
 
-    def delete_teacher(self, teacher_id: int) -> dict:
-        response = self.teacher_helper.delete_teacher(teacher_id=teacher_id)
+    def put_grade(self, grade_id: int, data: dict) -> dict:
+        response = self.grade_helper.put_grade(data=data, grade_id=grade_id)
         return response.json()
-
