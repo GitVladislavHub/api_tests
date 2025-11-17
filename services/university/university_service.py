@@ -1,3 +1,5 @@
+from http.client import responses
+
 from services.general.base_service import BaseService
 from services.university.helpers.grade_helper import GradeHelper
 from services.university.helpers.group_helper import GroupHelper
@@ -47,3 +49,8 @@ class UniversityService(BaseService):
     def delete_grade(self, grade_id: int) -> dict:
         response = self.grade_helper.delete_grade(grade_id=grade_id)
         return response.json()
+
+    def delete_teacher(self, teacher_id: int) -> dict:
+        response = self.teacher_helper.delete_teacher(teacher_id=teacher_id)
+        return response.json()
+
