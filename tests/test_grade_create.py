@@ -12,7 +12,7 @@ class TestCreateGrade:
     def test_create_grade(self, university_api_utils_admin, create_teacher, create_student):
         university_service = UniversityService(api_utils=university_api_utils_admin)
 
-        Logger.info("### Step 4. Create grade")
+        Logger.info("### Step 1. Create grade")
         grade_data = GradeRequest(
             teacher_id=create_teacher.id,
             student_id=create_student.id,
