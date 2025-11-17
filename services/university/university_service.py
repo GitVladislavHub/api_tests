@@ -29,6 +29,8 @@ class UniversityService(BaseService):
         response = self.student_helper.post_student(json=student_request.model_dump())
         return StudentResponse(**response.json())
 
+
+
     def create_random_student(self):
         raise NotImplementedError
 
@@ -44,7 +46,7 @@ class UniversityService(BaseService):
         response = self.teacher_helper.delete_teacher(teacher_id=teacher_id)
         return response.json()
 
-    def put_teacher(self, teacher_id: int, json: dict) -> dict:
+    def update_teacher(self, teacher_id: int, json: dict) -> dict:
         response = self.teacher_helper.put_teacher(teacher_id=teacher_id, json=json)
         return response.json()
 
@@ -56,6 +58,6 @@ class UniversityService(BaseService):
         response = self.grade_helper.delete_grade(grade_id=grade_id)
         return response.json()
 
-    def put_grade(self, grade_id: int, data: dict) -> dict:
+    def update_grade(self, grade_id: int, data: dict) -> dict:
         response = self.grade_helper.put_grade(data=data, grade_id=grade_id)
         return response.json()
