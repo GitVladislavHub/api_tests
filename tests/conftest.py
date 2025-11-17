@@ -65,6 +65,7 @@ def university_api_utils_admin(access_token):
 
 @pytest.fixture(scope="function", autouse=True)
 def auth_service_readiness():
+    """Готовность сервиса авторизация"""
     timeout = 180
     start_time = time.time()
     while time.time() < start_time + timeout:
@@ -81,6 +82,7 @@ def auth_service_readiness():
 
 @pytest.fixture(scope="function", autouse=True)
 def university_service_readiness():
+    """Готовность сервиса университет"""
     timeout = 180
     start_time = time.time()
     while time.time() < start_time + timeout:
@@ -97,7 +99,7 @@ def university_service_readiness():
 
 @pytest.fixture(scope="function")
 def create_teacher(university_api_utils_admin):
-    """Create teacher fixture"""
+    """Создание учителя"""
     university_service = UniversityService(api_utils=university_api_utils_admin)
     teacher_data = TeacherRequest(
         first_name=fake.first_name(),
@@ -109,7 +111,7 @@ def create_teacher(university_api_utils_admin):
 
 @pytest.fixture(scope="function")
 def create_group(university_api_utils_admin):
-    """Create group fixture"""
+    """Создание группы"""
     university_service = UniversityService(api_utils=university_api_utils_admin)
     group = GroupRequest(name=fake.name())
     group_response = university_service.create_group(group)
@@ -117,7 +119,7 @@ def create_group(university_api_utils_admin):
 
 @pytest.fixture(scope="function")
 def create_student(university_api_utils_admin, create_group):
-    """Create student fixture"""
+    """Создание студента"""
     university_service = UniversityService(api_utils=university_api_utils_admin)
     student_data = StudentRequest(
         first_name=fake.first_name(),

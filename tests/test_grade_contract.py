@@ -44,3 +44,4 @@ class TestGradeCreate:
 
         assert response.status_code == requests.status_codes.codes.created, \
             f"Wrong status code: {response.status_code}, Expected: {requests.status_codes.codes.created} "
+
