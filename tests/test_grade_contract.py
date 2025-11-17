@@ -30,7 +30,7 @@ class TestGradeCreate:
             student_id=1,
             grade=random.randint(GRADE_MIN, GRADE_MAX)).model_dump())
 
-        assert response.status_code == requests.status_codes.codes.forbidden, \
+        assert response.status_code == requests.status_codes.codes.unauthorized, \
             (f"Wrong status code: {response.status_code}, "
              f"Expected: {requests.codes.unauthorized}")
 
@@ -44,4 +44,3 @@ class TestGradeCreate:
 
         assert response.status_code == requests.status_codes.codes.created, \
             f"Wrong status code: {response.status_code}, Expected: {requests.status_codes.codes.created} "
-
