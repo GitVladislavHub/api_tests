@@ -13,3 +13,5 @@ build/
 *.log
 .log
 .logs/
+tests/logs/
+logs/
