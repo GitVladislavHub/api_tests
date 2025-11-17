@@ -43,3 +43,7 @@ class UniversityService(BaseService):
     def create_grade(self, grade_request: GradeRequest) -> GradeResponse:
         response = self.grade_helper.post_grade(data=grade_request.model_dump())
         return GradeResponse(**response.json())
+
+    def delete_grade(self, grade_id: int) -> dict:
+        response = self.grade_helper.delete_grade(grade_id=grade_id)
+        return response.json()
