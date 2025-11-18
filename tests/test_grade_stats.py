@@ -13,6 +13,6 @@ class TestGradeStats:
 
         statistic_response = university_service.get_grade_statistics()
 
-        assert statistic_response.count == 51, f" Actual {statistic_response.count}, Expected {51}"
+        assert statistic_response.count == COUNT_GRADES, f" Actual {statistic_response.count}, Expected {COUNT_GRADES}"
         assert statistic_response.min == GRADE_MIN, f" Actual {statistic_response.min}, Expected {GRADE_MIN}"
         assert statistic_response.max == GRADE_MAX, f" Actual {statistic_response.max}, Expected {GRADE_MAX}"
