@@ -13,6 +13,7 @@ from services.university.models.student_response import StudentResponse
 from services.university.models.teacher_request import TeacherRequest
 from services.university.models.teacher_response import TeacherResponse
 from utils.api_utils import ApiUtils
+from typing import List, Optional
 
 
 class UniversityService(BaseService):
@@ -70,3 +71,17 @@ class UniversityService(BaseService):
             teacher_id=teacher_id,
             group_id=group_id)
         return GradeStatisticResponse(**response.json())
+
+    def get_grades(self,
+                   student_id: Optional[int] = None,
+                   teacher_id: Optional[int] = None,
+                   group_id: Optional[int] = None) -> List[GradeResponse]:
+        params = {}
+        if student_id is not None: params['student_id'] = student_id
+        if teacher_id is not None: params['teacher_id'] = teacher_id
+        if group_id is not None: params['group_id'] = group_id
+
+        response = self.grade_helper.get_grade(**params)
+        grades_data = response.json()
+
+        return [GradeResponse(**grade_item) for grade_item in grades_data]
