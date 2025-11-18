@@ -18,11 +18,11 @@ class GroupHelper(BaseHelper):
         return response
 
     def delete_group(self, group_id: int) -> requests.Response:
-        endpoint = self.ENDPOINT_GROUP_ID.format(group_id)
+        endpoint = self.ENDPOINT_GROUP_ID.format(group_id=group_id)
         response = self.api_utils.delete(endpoint)
         return response
 
     def put_group(self, group_id: int, json: dict) -> requests.Response:
-        endpoint = self.ENDPOINT_GROUP_ID.format(group_id)
+        endpoint = self.ENDPOINT_GROUP_ID.format(group_id=group_id)
         response = self.api_utils.put(endpoint, json=json)
         return response

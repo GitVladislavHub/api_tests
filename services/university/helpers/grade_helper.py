@@ -28,6 +28,15 @@ class GradeHelper(BaseHelper):
         response = self.api_utils.put(endpoint, data=data)
         return response
 
-    def get_grades_statistics(self, json: dict) -> requests.Response:
-        response = self.api_utils.get(self.ENDPOINT_GRADE_STATS, json=json)
+    def get_grades_stats(
+            self,
+            student_id: int = None,
+            teacher_id: int = None,
+            group_id: int = None
+    ) -> requests.Response:
+        params = {}
+        if student_id is not None: params['student_id'] = student_id
+        if teacher_id is not None: params['teacher_id'] = teacher_id
+        if group_id is not None: params['group_id'] = group_id
+        response = self.api_utils.get(self.ENDPOINT_GRADE_STATS, params=params)
         return response

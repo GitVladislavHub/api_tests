@@ -18,11 +18,11 @@ class StudentHelper(BaseHelper):
         return response
 
     def delete_student(self, student_id: int, json: dict) -> requests.Response:
-        endpoint = self.ENDPOINT_STUDENT_ID.format(student_id)
+        endpoint = self.ENDPOINT_STUDENT_ID.format(student_id=student_id)
         response = self.api_utils.delete(endpoint, json=json)
         return response
 
     def put_student(self, student_id: int, json: dict) -> requests.Response:
-        endpoint = self.ENDPOINT_STUDENT_ID.format(student_id)
+        endpoint = self.ENDPOINT_STUDENT_ID.format(student_id=student_id)
         response = self.api_utils.put(endpoint, json=json)
         return response
