@@ -10,7 +10,6 @@ from services.university.university_service import UniversityService
 from faker import Faker
 
 fake = Faker()
-NUM_GRADES = 4
 
 
 class TestGradeStats:
@@ -33,7 +32,7 @@ class TestGradeStats:
         )
         student2 = university_service.create_student(student_request=student2)
 
-        suitable_grades = [5, 4, 3]
+        suitable_grades = [3, 4, 5]
         for grade in suitable_grades:
             grade_data = GradeRequest(
                 teacher_id=create_teacher.id,
