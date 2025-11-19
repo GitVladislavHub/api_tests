@@ -9,6 +9,8 @@ from services.auth.models.login_request import LoginRequest
 from services.auth.models.register_request import RegisterRequest
 from services.university.models.base_student import DegreeEnum
 from services.university.models.base_teacher_model import SubjectEnum
+from services.university.models.grade_base_model import GRADE_MIN, GRADE_MAX
+from services.university.models.grade_request import GradeRequest
 from services.university.models.group_request import GroupRequest
 from services.university.models.student_request import StudentRequest
 from services.university.models.teacher_request import TeacherRequest
@@ -109,6 +111,7 @@ def create_teacher(university_api_utils_admin):
     teacher_response = university_service.create_teacher(teacher_request=teacher_data)
     return teacher_response
 
+
 @pytest.fixture(scope="function")
 def create_group(university_api_utils_admin):
     """Создание группы"""
@@ -116,6 +119,7 @@ def create_group(university_api_utils_admin):
     group = GroupRequest(name=fake.name())
     group_response = university_service.create_group(group)
     return group_response
+
 
 @pytest.fixture(scope="function")
 def create_student(university_api_utils_admin, create_group):
