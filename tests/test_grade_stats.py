@@ -48,12 +48,12 @@ class TestGradeStats:
         grades_teacher = [3, 4]
 
         for grade in grades_teacher:
-            grade_data_student = GradeRequest(
+            grade_data_teacher = GradeRequest(
                 teacher_id=create_teacher.id,
                 student_id=create_student.id,
                 grade=grade
             )
-            university_service.create_grade(grade_data_student)
+            university_service.create_grade(grade_data_teacher)
 
         stats_teacher = university_service.get_grade_statistics(
             teacher_id=create_teacher.id,
