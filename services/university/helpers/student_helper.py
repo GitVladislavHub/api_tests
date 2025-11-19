@@ -13,8 +13,8 @@ class StudentHelper(BaseHelper):
         response = self.api_utils.post(self.ROOT_ENDPOINT, json=json)
         return response
 
-    def get_students(self, json: dict) -> requests.Response:
-        response = self.api_utils.get(self.ROOT_ENDPOINT, json=json)
+    def get_students(self, params: dict = None) -> requests.Response:
+        response = self.api_utils.get(self.ROOT_ENDPOINT, params=params)
         return response
 
     def delete_student(self, student_id: int, json: dict) -> requests.Response:

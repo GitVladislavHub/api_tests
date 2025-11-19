@@ -12,8 +12,8 @@ class TeacherHelper(BaseHelper):
         response = self.api_utils.post(self.ROOT_ENDPOINT, json=json)
         return response
 
-    def get_teacher(self, json: dict) -> requests.Response:
-        response = self.api_utils.get(self.ROOT_ENDPOINT, json=json)
+    def get_teacher(self, params: dict = None) -> requests.Response:
+        response = self.api_utils.get(self.ROOT_ENDPOINT, params=params)
         return response
 
     def put_teacher(self, teacher_id: int, json: dict) -> requests.Response:
