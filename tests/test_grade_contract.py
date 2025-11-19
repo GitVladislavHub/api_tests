@@ -12,7 +12,7 @@ fake = Faker()
 
 
 class TestGradeCreate:
-    def test_data(self, university_api_utils_admin):
+    def create_teacher_data(self, university_api_utils_admin):
         teacher_helper = TeacherHelper(api_utils=university_api_utils_admin)
         response = teacher_helper.post_teacher(TeacherRequest(
             first_name=fake.first_name(),
@@ -21,25 +21,25 @@ class TestGradeCreate:
         teacher_id = response.json()["id"]
         return teacher_id
 
-    def test_create_grade_anonym(self, university_api_utils_anonym, university_api_utils_admin):
-        teacher_id = self.test_data(university_api_utils_admin)
+    def test_create_grade_anonym(self, university_api_utils_anonym, university_api_utils_admin, create_student):
+        teacher_id = self.create_teacher_data(university_api_utils_admin)
 
         grade_helper = GradeHelper(university_api_utils_anonym)
         response = grade_helper.post_grade(GradeRequest(
             teacher_id=teacher_id,
-            student_id=1,
+            student_id=create_student.id,
             grade=random.randint(GRADE_MIN, GRADE_MAX)).model_dump())
 
         assert response.status_code == requests.status_codes.codes.unauthorized, \
             (f"Wrong status code: {response.status_code}, "
              f"Expected: {requests.codes.unauthorized}")
 
-    def test_create_grade_admin(self, university_api_utils_admin):
-        teacher_id = self.test_data(university_api_utils_admin)
+    def test_create_grade_admin(self, university_api_utils_admin, create_student):
+        teacher_id = self.create_teacher_data(university_api_utils_admin)
         grade_helper = GradeHelper(university_api_utils_admin)
         response = grade_helper.post_grade(GradeRequest(
             teacher_id=teacher_id,
-            student_id=1,
+            student_id=create_student.id,
             grade=random.randint(GRADE_MIN, GRADE_MAX)).model_dump())
 
         assert response.status_code == requests.status_codes.codes.created, \
