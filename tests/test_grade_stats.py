@@ -1,10 +1,4 @@
-import random
-from services.university.models.base_student import DegreeEnum
-from services.university.models.base_teacher_model import SubjectEnum
-from services.university.models.grade_base_model import GRADE_MIN, GRADE_MAX
 from services.university.models.grade_request import GradeRequest
-from services.university.models.student_request import StudentRequest
-from services.university.models.teacher_request import TeacherRequest
 from services.university.university_service import UniversityService
 from faker import Faker
 
