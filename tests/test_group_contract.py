@@ -15,7 +15,7 @@ class TestGroupContract:
             (f"Wrong status code. Actual: {response.status_code}, "
              f"but expected: {requests.status_codes.codes.unauthorized}")
 
-    def test_get_group(self, university_api_utils_admin):
+    def test_get_group_admin(self, university_api_utils_admin):
         group_helper = GroupHelper(api_utils=university_api_utils_admin)
         response = group_helper.get_groups()
 
