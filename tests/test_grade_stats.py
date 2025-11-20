@@ -2,6 +2,7 @@ from services.university.university_service import UniversityService
 from faker import Faker
 
 fake = Faker()
+GRADES = 5
 
 
 class TestGradeStats:
@@ -22,7 +23,7 @@ class TestGradeStats:
     def test_grade_student_statistics(self, university_api_utils_admin, create_teacher, create_student,
                                       create_grades_for_teacher_student):
         university_service = UniversityService(university_api_utils_admin)
-        grades_student = create_grades_for_teacher_student(num_grades=5)
+        grades_student = create_grades_for_teacher_student(num_grades=GRADES)
 
         stats_student = university_service.get_grade_statistics(
             student_id=create_student.id,
@@ -34,7 +35,7 @@ class TestGradeStats:
     def test_grade_teacher_statistic_filter(self, university_api_utils_admin, create_teacher, create_student,
                                             create_grades_for_teacher_student):
         university_service = UniversityService(university_api_utils_admin)
-        grades_teacher = create_grades_for_teacher_student(num_grades=5)
+        grades_teacher = create_grades_for_teacher_student(num_grades=GRADES)
 
         stats_teacher = university_service.get_grade_statistics(
             teacher_id=create_teacher.id,
@@ -47,7 +48,7 @@ class TestGradeStats:
                                           create_grades_for_teacher_student, create_group):
         university_service = UniversityService(university_api_utils_admin)
 
-        grades = create_grades_for_teacher_student(num_grades=4)
+        grades = create_grades_for_teacher_student(num_grades=GRADES)
 
         filter_stats_group_grade = university_service.get_grade_statistics(
             group_id=create_group.id
@@ -58,7 +59,7 @@ class TestGradeStats:
                                   create_grades_for_teacher_student, create_group):
         university_service = UniversityService(university_api_utils_admin)
 
-        grades = create_grades_for_teacher_student(num_grades=5)
+        grades = create_grades_for_teacher_student(num_grades=GRADES)
 
         stats = university_service.get_grade_statistics(
             teacher_id=create_teacher.id,
@@ -73,7 +74,7 @@ class TestGradeStats:
                                                   create_grades_for_teacher_student, create_group):
         university_service = UniversityService(university_api_utils_admin)
 
-        grades = create_grades_for_teacher_student(num_grades=3)
+        grades = create_grades_for_teacher_student(num_grades=GRADES)
 
         stats = university_service.get_grade_statistics(
             teacher_id=create_teacher.id,
