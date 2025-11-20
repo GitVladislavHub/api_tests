@@ -21,4 +21,6 @@ class TestTeacherCreate:
 
         teacher_response = university_service.create_teacher(teacher_request=teacher_data)
 
-        assert teacher_response.subject == teacher_data.subject
+        assert teacher_response.subject == teacher_data.subject, \
+            (f"Actual: {teacher_data.subject}, "
+             f"Expected: {teacher_data.subject}")
