@@ -135,3 +135,37 @@ def create_student(university_api_utils_admin, create_group):
     )
     student_response = university_service.create_student(student_request=student_data)
     return student_response
+
+
+@pytest.fixture(scope="function")
+def create_grade(university_api_utils_admin, create_teacher, create_student, create_group):
+    """Создание оценки"""
+    university_service = UniversityService(api_utils=university_api_utils_admin)
+    grade_data = GradeRequest(
+        teacher_id=create_teacher.id,
+        student_id=create_student.id,
+        grade=random.randint(GRADE_MIN, GRADE_MAX))
+
+    grade_response = university_service.create_grade(grade_request=grade_data)
+    return grade_response
+
+
+@pytest.fixture
+def create_grades_for_teacher_student(university_api_utils_admin, create_teacher, create_student):
+    """Создание оценки для учителя, студента и др."""
+    university_service = UniversityService(university_api_utils_admin)
+
+    def create_grades(num_grades=None):
+        grades = [random.randint(GRADE_MIN, GRADE_MAX) for _ in range(num_grades)]
+
+        for grade in grades:
+            grade_data = GradeRequest(
+                teacher_id=create_teacher.id,
+                student_id=create_student.id,
+                grade=grade
+            )
+            university_service.create_grade(grade_data)
+
+        return grades
+
+    return create_grades

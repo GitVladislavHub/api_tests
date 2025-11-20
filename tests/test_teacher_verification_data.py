@@ -10,7 +10,7 @@ fake = Faker()
 
 
 class TestTeacherCreate:
-    def test_verification_teacher(self, university_api_utils_admin):
+    def test_create_teacher_returns_correct_subject(self, university_api_utils_admin):
         Logger.info("### Step 1. Create teacher")
         university_service = UniversityService(api_utils=university_api_utils_admin)
         teacher_data = TeacherRequest(
