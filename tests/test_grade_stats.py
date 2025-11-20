@@ -53,7 +53,9 @@ class TestGradeStats:
         filter_stats_group_grade = university_service.get_grade_statistics(
             group_id=create_group.id
         )
-        assert filter_stats_group_grade.count == len(grades)
+        assert filter_stats_group_grade.count == len(grades), \
+            (f"Actual: {filter_stats_group_grade.count}, "
+             f"Expected: {len(grades)} ")
 
     def test_combine_filter_stats(self, university_api_utils_admin, create_teacher, create_student,
                                   create_grades_for_teacher_student, create_group):

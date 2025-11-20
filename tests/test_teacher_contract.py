@@ -27,7 +27,7 @@ class TestTeacherContract:
         response = teacher_helper.post_teacher({
             "first_name": fake.first_name(),
             "last_name": fake.last_name(),
-            "subject": "History"
+            "subject": random.choice(list(SubjectEnum))
         })
 
         assert response.status_code == requests.status_codes.codes.unauthorized, \

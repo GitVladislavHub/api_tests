@@ -9,8 +9,8 @@ class GroupHelper(BaseHelper):
     ROOT_ENDPOINT = f"{ENDPOINT_PREFIX}/"
     ENDPOINT_GROUP_ID = f"{ENDPOINT_PREFIX}/{{group_id}}"
 
-    def get_groups(self, params: dict = None) -> requests.Response:
-        response = self.api_utils.get(self.ROOT_ENDPOINT, params=params)
+    def get_groups(self) -> requests.Response:
+        response = self.api_utils.get(self.ROOT_ENDPOINT)
         return response
 
     def post_group(self, json: dict) -> requests.Response:
