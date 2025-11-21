@@ -27,9 +27,12 @@ jobs:
     - name: Run Ruff linter
       run: ruff check . --ignore=E701,F401,F811
 
-    - name: Start services with Docker Compose
+    - name: Set up Docker Compose
+      uses: docker/setup-compose-action@v3
+
+    - name: Start services with Docker Compose  
       run: |
-        docker-compose up -d
+        docker compose up -d
 
     - name: Wait for services to be ready
       run: |
