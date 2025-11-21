@@ -38,9 +38,12 @@ jobs:
         timeout 180 bash -c 'until curl -f http://localhost:8000/docs 2>/dev/null; do sleep 5; done'
         timeout 180 bash -c 'until curl -f http://localhost:8001/docs 2>/dev/null; do sleep 5; done'
 
-    - name: Run API tests
+    - name: Build and run tests in Docker
       run: |
-        python -m pytest tests/ -v --alluredir=allure-results
+        docker build -t my-tests .
+        docker run --network host \
+        -v $(pwd)/allure-results:/app/allure-results \
+        my-tests
 
     - name: Upload test results
       uses: actions/upload-artifact@v4
