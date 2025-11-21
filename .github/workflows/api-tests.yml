@@ -22,7 +22,7 @@ jobs:
     - name: Install dependencies
       run: |
         pip install -r requirements.txt
-        pip install ruff allure-pytest  # Докукиваем только недостающее
+        pip install ruff allure-pytest
 
     - name: Run Ruff linter
       run: ruff check .
@@ -34,7 +34,9 @@ jobs:
     - name: Wait for services to be ready
       run: |
         echo "Waiting for services to be ready..."
-        sleep 30
+        # Ждем оба сервиса
+        timeout 180 bash -c 'until curl -f http://localhost:8000/docs 2>/dev/null; do sleep 5; done'
+        timeout 180 bash -c 'until curl -f http://localhost:8001/docs 2>/dev/null; do sleep 5; done'
 
     - name: Run API tests
       run: |
