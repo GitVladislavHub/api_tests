@@ -1,4 +1,4 @@
-from conftest import create_teacher
+from .conftest import create_teacher
 from logger.logger import Logger
 from services.university.university_service import UniversityService
 
