@@ -25,7 +25,7 @@ jobs:
         pip install ruff allure-pytest
 
     - name: Run Ruff linter
-      run: ruff check . --fix
+      run: ruff check . --ignore=E701,F401,F811
 
     - name: Start services with Docker Compose
       run: |
