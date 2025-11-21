@@ -1,6 +1,21 @@
 version: '3.8'
 services:
-  test-api:
-    image: postman/echo:latest
+  service-1:
+    image: your-service-1-image:latest  # Замените на реальный образ
     ports:
-      - "8080:8080"
+      - "8000:8000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/docs"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  service-2:
+    image: your-service-2-image:latest  # Замените на реальный образ
+    ports:
+      - "8001:8001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/docs"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
