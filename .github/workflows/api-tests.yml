@@ -22,26 +22,27 @@ jobs:
     - name: Install dependencies
       run: |
         pip install -r requirements.txt
-        pip install ruff pytest allure-pytest
+        pip install ruff allure-pytest  # Докукиваем только недостающее
 
     - name: Run Ruff linter
       run: ruff check .
 
-    - name: Start services
+    - name: Start services with Docker Compose
       run: |
         docker-compose up -d
 
-    - name: Wait for services
+    - name: Wait for services to be ready
       run: |
-        echo "Waiting for services..."
+        echo "Waiting for services to be ready..."
         sleep 30
 
-    - name: Run tests
+    - name: Run API tests
       run: |
         python -m pytest tests/ -v --alluredir=allure-results
 
-    - name: Upload results
+    - name: Upload test results
       uses: actions/upload-artifact@v4
       with:
-        name: test-results
+        name: allure-results
         path: allure-results/
+        retention-days: 30
