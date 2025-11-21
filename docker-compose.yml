@@ -1,0 +1,11 @@
+version: '3.8'
+services:
+  your-api:
+    image: your-api-image:latest
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
