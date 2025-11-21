@@ -1,6 +1,13 @@
 FROM python:3.14-slim
+
 WORKDIR /app
+
+
 COPY requirements.txt .
 RUN pip install -r requirements.txt
-COPY tests/ tests/
-CMD ["pytest", "tests/", "--alluredir=allure-results"]
+RUN pip install allure-pytest
+
+
+COPY . .
+
+CMD ["python", "-m", "pytest", "tests/", "-v", "--alluredir=/app/allure-results"]
