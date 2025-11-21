@@ -1,1 +1,58 @@
+name: API Tests  # Название workflow в интерфейсе GitHub
 
+on:
+  pull_request:
+    branches: [ main, develop ]  # Запускается при PR в эти ветки
+
+jobs:
+  test:
+    runs-on: ubuntu-latest  # Запускается на Ubuntu
+    
+    steps:
+    # 1. Клонирует код репозитория
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    # 2. Устанавливает Python
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    # 3. Устанавливает Ruff линтер
+    - name: Install Ruff
+      run: pip install ruff
+
+    # 4. Запускает линтер
+    - name: Run Ruff linter
+      run: ruff check .
+
+    # 5. Запускает сервисы через docker-compose
+    - name: Start services with Docker Compose
+      run: |
+        docker-compose up -d
+
+    # 6. Ждет 30 секунд пока сервисы запустятся
+    - name: Wait for services to be ready
+      run: |
+        echo "Waiting for services to be ready..."
+        sleep 30
+
+    # 7. Запускает тесты 
+    - name: Run API tests
+      run: |
+        echo "Here would be API tests execution"
+        # docker run --network host your-test-image:latest
+
+    # 8. Создает папку для результатов
+    - name: Create test results directory
+      run: |
+        mkdir -p allure-results
+
+    # 9. Сохраняет результаты как артефакт
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-results
+        path: allure-results/
+        retention-days: 30
