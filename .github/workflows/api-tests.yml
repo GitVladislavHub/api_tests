@@ -1,0 +1,47 @@
+name: API Tests
+
+on:
+  pull_request:
+    branches: [ main, develop ]
+  push:
+    branches: [ task_1_api ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.14'
+
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+        pip install ruff pytest allure-pytest
+
+    - name: Run Ruff linter
+      run: ruff check .
+
+    - name: Start services
+      run: |
+        docker-compose up -d
+
+    - name: Wait for services
+      run: |
+        echo "Waiting for services..."
+        sleep 30
+
+    - name: Run tests
+      run: |
+        python -m pytest tests/ -v --alluredir=allure-results
+
+    - name: Upload results
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-results
+        path: allure-results/
