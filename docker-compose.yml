@@ -1,6 +1,6 @@
 services:
   test-service-1:
-    image: python:3.11-slim
+    image: python:3.12-slim
     ports:
       - "8000:8000"
     command: >
