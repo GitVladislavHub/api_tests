@@ -35,8 +35,11 @@ class GradeHelper(BaseHelper):
             group_id: int = None
     ) -> requests.Response:
         params = {}
-        if student_id is not None: params['student_id'] = student_id
-        if teacher_id is not None: params['teacher_id'] = teacher_id
-        if group_id is not None: params['group_id'] = group_id
+        if student_id is not None:
+            params['student_id'] = student_id
+        if teacher_id is not None:
+            params['teacher_id'] = teacher_id
+        if group_id is not None:
+            params['group_id'] = group_id
         response = self.api_utils.get(self.ENDPOINT_GRADE_STATS, params=params)
         return response

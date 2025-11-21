@@ -77,9 +77,12 @@ class UniversityService(BaseService):
                    teacher_id: Optional[int] = None,
                    group_id: Optional[int] = None) -> List[GradeResponse]:
         params = {}
-        if student_id is not None: params['student_id'] = student_id
-        if teacher_id is not None: params['teacher_id'] = teacher_id
-        if group_id is not None: params['group_id'] = group_id
+        if student_id is not None:
+            params['student_id'] = student_id
+        if teacher_id is not None:
+            params['teacher_id'] = teacher_id
+        if group_id is not None:
+            params['group_id'] = group_id
 
         response = self.grade_helper.get_grade(**params)
         grades_data = response.json()
