@@ -1,21 +1,18 @@
-version: '3.8'
 services:
-  service-1:
-    image: your-service-1-image:latest  # Замените на реальный образ
+  test-service-1:
+    image: python:3.11-slim
     ports:
       - "8000:8000"
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/docs"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+    command: >
+      sh -c "pip install fastapi uvicorn &&
+             echo 'from fastapi import FastAPI; app = FastAPI()' > app.py &&
+             uvicorn app:app --host 0.0.0.0 --port 8000"
 
-  service-2:
-    image: your-service-2-image:latest  # Замените на реальный образ
+  test-service-2:
+    image: python:3.11-slim
     ports:
       - "8001:8001"
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8001/docs"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+    command: >
+      sh -c "pip install fastapi uvicorn &&
+             echo 'from fastapi import FastAPI; app = FastAPI()' > app.py &&
+             uvicorn app:app --host 0.0.0.0 --port 8001"
