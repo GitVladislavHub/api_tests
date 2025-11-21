@@ -2,8 +2,10 @@ name: API Tests  # Название workflow в интерфейсе GitHub
 
 on:
   pull_request:
-    branches: [ main, develop ]  # Запускается при PR в эти ветки
-
+    branches: [ main, develop ]
+  push:
+    branches: [ main ]
+    
 jobs:
   test:
     runs-on: ubuntu-latest  # Запускается на Ubuntu
@@ -17,7 +19,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.11'
+        python-version: '3.14'
 
     # 3. Устанавливает Ruff линтер
     - name: Install Ruff
