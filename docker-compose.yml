@@ -3,29 +3,17 @@ services:
     image: python:3.12-slim
     ports:
       - "8000:8000"
-    command: >
+    command: |
       sh -c "
-      pip install fastapi uvicorn pydantic &&
+      pip install fastapi uvicorn &&
       echo 'from fastapi import FastAPI
-from pydantic import BaseModel
-
 app = FastAPI()
-
-class LoginResponse(BaseModel):
-    access_token: str = \"mock-token-123\"
-    token_type: str = \"bearer\"
-
 @app.post(\"/auth/register/\")
-def register():
-    return {\"message\": \"registered\"}
-
+def register(): return {\"message\":\"registered\"}
 @app.post(\"/auth/login/\")
-def login():
-    return LoginResponse()
-
+def login(): return {\"access_token\":\"mock\",\"token_type\":\"bearer\"}
 @app.get(\"/docs\")
-def docs():
-    return {\"status\": \"ok\"}' > app.py &&
+def docs(): return {\"status\":\"ok\"}' > app.py &&
       uvicorn app:app --host 0.0.0.0 --port 8000
       "
 
@@ -33,35 +21,22 @@ def docs():
     image: python:3.12-slim
     ports:
       - "8001:8000"
-    command: >
+    command: |
       sh -c "
       pip install fastapi uvicorn &&
       echo 'from fastapi import FastAPI, HTTPException
-
 app = FastAPI()
-
 @app.get(\"/grades/stats\")
-def grades_stats():
-    raise HTTPException(status_code=401, detail=\"Unauthorized\")
-
+def grades_stats(): raise HTTPException(401, \"Unauthorized\")
 @app.get(\"/groups/\")
-def get_groups():
-    raise HTTPException(status_code=401, detail=\"Unauthorized\")
-
+def get_groups(): raise HTTPException(401, \"Unauthorized\") 
 @app.post(\"/groups/\")
-def create_group():
-    raise HTTPException(status_code=401, detail=\"Unauthorized\")
-
+def create_group(): raise HTTPException(401, \"Unauthorized\")
 @app.get(\"/teachers/\")
-def get_teachers():
-    raise HTTPException(status_code=401, detail=\"Unauthorized\")
-
+def get_teachers(): raise HTTPException(401, \"Unauthorized\")
 @app.post(\"/teachers/\")
-def create_teacher():
-    raise HTTPException(status_code=401, detail=\"Unauthorized\")
-
+def create_teacher(): raise HTTPException(401, \"Unauthorized\")
 @app.get(\"/docs\")
-def docs():
-    return {\"status\": \"ok\"}' > app.py &&
+def docs(): return {\"status\":\"ok\"}' > app.py &&
       uvicorn app:app --host 0.0.0.0 --port 8001
       "
