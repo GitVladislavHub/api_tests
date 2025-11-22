@@ -1,18 +1,67 @@
 services:
-  test-service-1:
+  auth-service:
     image: python:3.12-slim
     ports:
       - "8000:8000"
     command: >
-      sh -c "pip install fastapi uvicorn &&
-             echo 'from fastapi import FastAPI; app = FastAPI()' > app.py &&
+      sh -c "pip install fastapi uvicorn pydantic &&
+             cat > app.py << 'EOF'
+from fastapi import FastAPI
+from pydantic import BaseModel
+
+app = FastAPI()
+
+class LoginResponse(BaseModel):
+    access_token: str = \"mock-token-123\"
+    token_type: str = \"bearer\"
+
+@app.post(\"/auth/register/\")
+def register():
+    return {\"message\": \"registered\"}
+
+@app.post(\"/auth/login/\")
+def login():
+    return LoginResponse()
+
+@app.get(\"/docs\")
+def docs():
+    return {\"status\": \"ok\"}
+EOF
              uvicorn app:app --host 0.0.0.0 --port 8000"
 
-  test-service-2:
+  university-service:
     image: python:3.12-slim
     ports:
       - "8001:8001"
     command: >
       sh -c "pip install fastapi uvicorn &&
-             echo 'from fastapi import FastAPI; app = FastAPI()' > app.py &&
+             cat > app.py << 'EOF'
+from fastapi import FastAPI, HTTPException
+
+app = FastAPI()
+
+@app.get(\"/grades/stats\")
+def grades_stats():
+    raise HTTPException(status_code=401, detail=\"Unauthorized\")
+
+@app.get(\"/groups/\")
+def get_groups():
+    raise HTTPException(status_code=401, detail=\"Unauthorized\")
+
+@app.post(\"/groups/\")
+def create_group():
+    raise HTTPException(status_code=401, detail=\"Unauthorized\")
+
+@app.get(\"/teachers/\")
+def get_teachers():
+    raise HTTPException(status_code=401, detail=\"Unauthorized\")
+
+@app.post(\"/teachers/\")
+def create_teacher():
+    raise HTTPException(status_code=401, detail=\"Unauthorized\")
+
+@app.get(\"/docs\")
+def docs():
+    return {\"status\": \"ok\"}
+EOF
              uvicorn app:app --host 0.0.0.0 --port 8001"
