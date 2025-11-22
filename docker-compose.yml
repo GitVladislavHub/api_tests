@@ -11,7 +11,7 @@ services:
   test-service-2:
     image: python:3.12-slim
     ports:
-      - "8001:8001"
+      - "8001:8000"
     command: >
       sh -c "pip install fastapi uvicorn &&
              echo 'from fastapi import FastAPI; app = FastAPI()' > app.py &&
