@@ -4,3 +4,15 @@ __pycache__/
 *.py[cod]
 *.env
 *.venv
+# Python
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+*.log
+logs/
+
+#allure
+allure-results
+allure-report
