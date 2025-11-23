@@ -28,6 +28,6 @@ class TestDeleteGrade:
         Logger.info("### Step 1. Delete grade by id anonym")
         delete_grade_response = university_service_2.delete_grade(grade_id=create_grade.id)
 
-        assert delete_grade_response == {"detail": "Invalid login credentials"}, \
+        assert delete_grade_response == {"detail": "Access denied"}, \
             (f"Actual: {delete_grade_response}, "
-             f"Expected: {{'detail': 'Invalid login credentials'}}")
+             f"Expected: {{'detail': 'Access denied'}}")
