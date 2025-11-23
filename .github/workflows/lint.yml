@@ -15,48 +15,71 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    # 2. Устанавливает Docker Compose
+    # 2. Диагностика структуры проекта
+    - name: Debug project structure
+      run: |
+        echo "=== CURRENT DIRECTORY ==="
+        pwd
+        echo "=== FULL PROJECT STRUCTURE ==="
+        ls -la
+        echo "=== TESTS FOLDER CONTENT ==="
+        if [ -d "tests" ]; then
+          ls -la tests/
+        else
+          echo "ERROR: tests folder not found!"
+          echo "Available folders:"
+          find . -type d -name "*test*" | head -10
+        fi
+
+    # 3. Устанавливает Docker Compose
     - name: Set up Docker Compose
       run: |
         sudo curl -L "https://github.com/docker/compose/releases/download/v2.24.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
         sudo chmod +x /usr/local/bin/docker-compose
         docker-compose --version
 
-    # 3. Устанавливает Python
+    # 4. Устанавливает Python
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.14'
 
-    # 4. Устанавливает зависимости для тестов
+    # 5. Устанавливает зависимости для тестов
     - name: Install dependencies
       run: |
-        pip install -r requirements.txt
-        pip install pytest allure-pytest requests
+        pip install --upgrade pip
+        # Если есть requirements.txt
+        if [ -f "requirements.txt" ]; then
+          pip install -r requirements.txt
+        fi
+        # Обязательные пакеты для тестов
+        pip install pytest allure-pytest requests Faker
 
-    # 5. Устанавливает Ruff линтер
+    # 6. Устанавливает Ruff линтер
     - name: Install Ruff
       run: pip install ruff
 
-    # 6. Запускает линтер
+    # 7. Запускает линтер
     - name: Run Ruff linter
       run: ruff check .
 
-    # 7. Устанавливает Allure CLI
+    # 8. Устанавливает Allure CLI
     - name: Install Allure
       run: |
         sudo apt-get update
-        sudo apt-get install default-jre
-        wget https://github.com/allure-framework/allure2/releases/download/2.27.0/allure-2.27.0.tgz
+        sudo apt-get install default-jre -y
+        wget -q https://github.com/allure-framework/allure2/releases/download/2.27.0/allure-2.27.0.tgz
         tar -zxvf allure-2.27.0.tgz
         sudo mv allure-2.27.0 /opt/allure
-        sudo ln -s /opt/allure/bin/allure /usr/bin/allure
+        sudo ln -sf /opt/allure/bin/allure /usr/bin/allure
 
-    # 8. Проверяет установку Allure
+    # 9. Проверяет установку Allure
     - name: Verify Allure installation
-      run: allure --version
+      run: |
+        allure --version
+        which allure
 
-    # 9. СОЗДАЕТ .env ФАЙЛ С ПЕРЕМЕННЫМИ ОКРУЖЕНИЯ
+    # 10. Создает .env файл с переменными окружения
     - name: Create environment file
       run: |
         cat > .env << EOF
@@ -69,57 +92,100 @@ jobs:
         AUTH_SERVICE_INTERNAL_URL=http://auth:8000
         AUTH_SERVICE_API_URL=http://localhost:8000
         EOF
-        
-        echo "Created .env file:"
+        echo "Created .env file with content:"
         cat .env
 
-    # 10. Запускает сервисы через docker-compose
+    # 11. Запускает сервисы через docker-compose
     - name: Start services with Docker Compose
       run: |
         docker-compose up -d
 
-    # 11. Ждет пока сервисы запустятся (УЛУЧШЕННАЯ ВЕРСИЯ)
+    # 12. Ждет пока сервисы запустятся
     - name: Wait for services to be ready
       run: |
         echo "Waiting for services to be ready..."
         # Ждем здорового состояния PostgreSQL
-        timeout 60s bash -c 'until docker-compose ps | grep postgres | grep -q "healthy"; do sleep 5; echo "Waiting for PostgreSQL..."; done'
+        timeout 120s bash -c '
+          while true; do
+            if docker-compose ps | grep postgres | grep -q "healthy"; then
+              echo "PostgreSQL is healthy!"
+              break
+            fi
+            echo "Waiting for PostgreSQL to be healthy..."
+            sleep 10
+          done
+        '
         # Дополнительное время для приложений
-        sleep 15
-        echo "Services status:"
+        sleep 20
+        echo "Final services status:"
         docker-compose ps
 
- # 12. Запускает тесты с Allure (ИСПРАВЛЕННАЯ ВЕРСИЯ)
+    # 13. Запускает тесты с Allure
     - name: Run API tests with Allure
       run: |
+        echo "=== STARTING TESTS WITH ALLURE ==="
         mkdir -p allure-results
-        # Запускаем тесты из папки tests
-        python -m pytest tests/ \
-          --alluredir=allure-results \
-          --clean-alluredir \
-          -v \
-          --import-mode=append
-        echo "Allure results files:"
-        ls -la allure-results/
+        
+        # Пробуем разные способы запуска тестов
+        echo "Attempt 1: Running from tests/ directory"
+        if [ -d "tests" ]; then
+          python -m pytest tests/ \
+            --alluredir=allure-results \
+            --clean-alluredir \
+            -v \
+            --tb=short
+        else
+          echo "ERROR: tests directory not found!"
+          echo "Attempt 2: Running from current directory"
+          python -m pytest . \
+            --alluredir=allure-results \
+            --clean-alluredir \
+            -v \
+            --tb=short
+        fi
 
-    # 13. Генерирует HTML отчет
+        echo "=== ALLURE RESULTS ==="
+        ls -la allure-results/
+        echo "Number of result files: $(find allure-results -type f | wc -l)"
+
+    # 14. Генерирует HTML отчет
     - name: Generate Allure report
       run: |
-        allure generate allure-results -o allure-report --clean
-        echo "Allure report generated successfully!"
+        echo "=== GENERATING ALLURE REPORT ==="
+        if [ -d "allure-results" ] && [ "$(find allure-results -type f | wc -l)" -gt 0 ]; then
+          allure generate allure-results -o allure-report --clean
+          echo "Allure report generated successfully!"
+          echo "Report content:"
+          ls -la allure-report/
+        else
+          echo "WARNING: No allure results found to generate report"
+          # Создаем пустой отчет чтобы workflow не падал
+          mkdir -p allure-report
+          echo "<html><body><h1>No test results found</h1></body></html>" > allure-report/index.html
+        fi
 
-    # 14. Сохраняет сырые результаты тестов
+    # 15. Сохраняет сырые результаты тестов
     - name: Upload Allure results
       uses: actions/upload-artifact@v4
       with:
         name: allure-results
         path: allure-results/
         retention-days: 30
+        if-no-files-found: warn
 
-    # 15. Сохраняет HTML отчет
+    # 16. Сохраняет HTML отчет
     - name: Upload Allure report
       uses: actions/upload-artifact@v4
       with:
         name: allure-report
         path: allure-report/
         retention-days: 30
+        if-no-files-found: warn
+
+    # 17. Показывает итоговую информацию
+    - name: Test completion info
+      run: |
+        echo "=== TEST EXECUTION COMPLETED ==="
+        echo "Allure results saved as artifact: allure-results"
+        echo "Allure report saved as artifact: allure-report"
+        echo "Download artifacts to view the detailed test report"
