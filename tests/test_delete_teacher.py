@@ -1,9 +1,16 @@
+import allure
+from allure_commons.types import Severity
+
 from conftest import create_teacher
 from logger.logger import Logger
 from services.university.university_service import UniversityService
+from utils.allure_tags import AllureTag
 
 
+@allure.tag(AllureTag.DELETE_USER)
+@allure.severity(Severity.CRITICAL)
 class TestDeleteTeacher:
+    @allure.title("Test delete Teacher")
     def test_delete_teacher(self, university_api_utils_admin, create_teacher):
         university_service = UniversityService(university_api_utils_admin)
         Logger.info("### Step 1.Create teacher ")

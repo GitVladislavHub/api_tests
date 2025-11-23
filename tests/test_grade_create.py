@@ -1,14 +1,21 @@
 import random
+
+import allure
+
 from logger.logger import Logger
 from services.university.models.grade_base_model import GRADE_MIN, GRADE_MAX
 from services.university.models.grade_request import GradeRequest
 from services.university.university_service import UniversityService
 from faker import Faker
 
+from utils.allure_tags import AllureTag
+
 fake = Faker()
 
 
+@allure.tag(AllureTag.CREATE_USER)
 class TestCreateGrade:
+    @allure.title("Test create grade")
     def test_create_grade(self, university_api_utils_admin, create_teacher, create_student):
         university_service = UniversityService(api_utils=university_api_utils_admin)
 

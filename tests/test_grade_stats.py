@@ -1,11 +1,17 @@
+import allure
+
 from services.university.university_service import UniversityService
 from faker import Faker
+
+from utils.allure_tags import AllureTag
 
 fake = Faker()
 NUM_GRADES = 5
 
 
+@allure.tag(AllureTag.CREATE_USER, AllureTag.CREATE_FILTER)
 class TestGradeStats:
+    @allure.title("Test grade statistics filter(student_id, teacher_id)")
     def test_grade_statistics_filter(self, university_api_utils_admin, create_teacher, create_student,
                                      create_grades_for_teacher_student):
         university_service = UniversityService(university_api_utils_admin)
@@ -20,6 +26,7 @@ class TestGradeStats:
             (f"Actual: {stats.avg:.2f}, "
              f"Expected: {sum(grades) / len(grades):.2f}")
 
+    @allure.title("Test grade statistics filter(student_id)")
     def test_grade_student_statistics(self, university_api_utils_admin, create_teacher, create_student,
                                       create_grades_for_teacher_student):
         university_service = UniversityService(university_api_utils_admin)
@@ -32,6 +39,7 @@ class TestGradeStats:
             (f"Actual: {stats_student.avg:.2f}, "
              f"Expected: {sum(grades_student) / len(grades_student):.2f}")
 
+    @allure.title("Test grade statistics filter(teacher_id)")
     def test_grade_teacher_statistic_filter(self, university_api_utils_admin, create_teacher, create_student,
                                             create_grades_for_teacher_student):
         university_service = UniversityService(university_api_utils_admin)
@@ -44,6 +52,7 @@ class TestGradeStats:
             (f"Actual: {stats_teacher.count}, "
              f"Expected: {len(grades_teacher)}")
 
+    @allure.title("Test grade statistics filter(group_id)")
     def test_grade_group_statistic_filter(self, university_api_utils_admin, create_teacher, create_student,
                                           create_grades_for_teacher_student, create_group):
         university_service = UniversityService(university_api_utils_admin)
@@ -57,6 +66,7 @@ class TestGradeStats:
             (f"Actual: {filter_stats_group_grade.count}, "
              f"Expected: {len(grades)} ")
 
+    @allure.title("Test grade statistics filter(teacher_id, student_id, group_id)")
     def test_combine_filter_stats(self, university_api_utils_admin, create_teacher, create_student,
                                   create_grades_for_teacher_student, create_group):
         university_service = UniversityService(university_api_utils_admin)
@@ -72,6 +82,7 @@ class TestGradeStats:
             (f"Actual: {stats.count}, "
              f"Expected: {len(grades)}")
 
+    @allure.title("Test grade statistics filter(teacher_id, group_id)")
     def test_grade_teacher_group_statistic_filter(self, university_api_utils_admin, create_teacher, create_student,
                                                   create_grades_for_teacher_student, create_group):
         university_service = UniversityService(university_api_utils_admin)
