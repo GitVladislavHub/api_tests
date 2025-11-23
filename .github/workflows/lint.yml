@@ -42,7 +42,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.11'  # Изменил на 3.11 для совместимости
+        python-version: '3.11'
 
     # 6. Устанавливает зависимости
     - name: Install dependencies
@@ -91,7 +91,7 @@ jobs:
     # 12. Ждет запуска сервисов
     - name: Wait for services
       run: |
-        sleep 5
+        sleep 30
 
     # 13. Проверяем доступность сервисов
     - name: Check services health
@@ -101,14 +101,14 @@ jobs:
         echo "=== CHECKING PORTS ==="
         netstat -tulpn | grep :800 || echo "No services on port 800"
 
-    # 14. Запускает тесты с Allure (исправленная команда)
+    # 14. Запускает тесты с Allure
     - name: Run tests with Allure
       run: |
         echo "=== RUNNING TESTS ==="
         mkdir -p allure-results
         pytest tests/ -v --alluredir=allure-results
 
-    # 15. Генерирует отчет Allure
+    # 15. Генерирует отчет Allure ПЕРЕД остановкой сервисов
     - name: Generate Allure report
       if: always()
       run: |
@@ -124,7 +124,7 @@ jobs:
         path: allure-report/
         retention-days: 30
 
-    # 17. Останавливает сервисы
+    # 17. Останавливает сервисы ПОСЛЕ генерации отчета
     - name: Stop services
       if: always()
       run: |
