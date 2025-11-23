@@ -11,13 +11,17 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    # 1. Клонирует код репозитория с указанием ветки
+    # 1. Клонирует код репозитория
     - name: Checkout code
       uses: actions/checkout@v4
-      with:
-        ref: task_1_api
 
-    # 2. ДИАГНОСТИКА - проверяем структуру проекта
+    # 2. Очищаем предыдущие результаты
+    - name: Clean previous reports
+      run: |
+        echo "=== CLEANING PREVIOUS RESULTS ==="
+        rm -rf allure-results allure-report
+
+    # 3. ДИАГНОСТИКА - проверяем структуру проекта
     - name: Debug project structure
       run: |
         echo "=== CURRENT BRANCH ==="
@@ -27,41 +31,35 @@ jobs:
         ls -la
         echo "=== TESTS FOLDER CONTENT ==="
         ls -la tests/ || echo "Tests folder not found"
-        echo "=== SEARCH FOR TEST FILES ==="
-        find . -name "*.py" | grep -E "(test_|_test)" | head -20 || echo "No test files found"
 
-    # 3. Устанавливает Docker Compose
+    # 4. Устанавливает Docker Compose
     - name: Set up Docker Compose
       run: |
         sudo curl -L "https://github.com/docker/compose/releases/download/v2.24.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
         sudo chmod +x /usr/local/bin/docker-compose
 
-    # 4. Устанавливает Python
+    # 5. Устанавливает Python
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.12'
+        python-version: '3.11'  # Изменил на 3.11 для совместимости
 
-    # 5. Устанавливает зависимости
+    # 6. Устанавливает зависимости
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        if [ -f requirements.txt ]; then 
-          pip install -r requirements.txt
-        else
-          echo "requirements.txt not found, installing basic dependencies"
-          pip install pytest allure-pytest requests docker-compose
-        fi
+        pip install -r requirements.txt
+        pip install allure-pytest
 
-    # 6. Устанавливает Ruff
+    # 7. Устанавливает Ruff
     - name: Install Ruff
       run: pip install ruff
 
-    # 7. Запускает линтер
+    # 8. Запускает линтер
     - name: Run Ruff linter
       run: ruff check . --fix
 
-    # 8. Устанавливает Allure
+    # 9. Устанавливает Allure
     - name: Install Allure
       run: |
         sudo apt-get update
@@ -71,7 +69,7 @@ jobs:
         sudo mv allure-2.27.0 /opt/allure
         sudo ln -sf /opt/allure/bin/allure /usr/bin/allure
 
-    # 9. Создает .env файл
+    # 10. Создает .env файл
     - name: Create environment file
       run: |
         cat > .env << EOF
@@ -85,17 +83,17 @@ jobs:
         AUTH_SERVICE_API_URL=http://localhost:8000
         EOF
 
-    # 10. Запускает сервисы
+    # 11. Запускает сервисы
     - name: Start services
       run: |
         docker-compose up -d
 
-    # 11. Ждет запуска сервисов
+    # 12. Ждет запуска сервисов
     - name: Wait for services
       run: |
-        sleep 30
+        sleep 5
 
-    # 12. Проверяем доступность сервисов
+    # 13. Проверяем доступность сервисов
     - name: Check services health
       run: |
         echo "=== CHECKING SERVICES ==="
@@ -103,19 +101,21 @@ jobs:
         echo "=== CHECKING PORTS ==="
         netstat -tulpn | grep :800 || echo "No services on port 800"
 
-    # 13. Запускает тесты с Allure
+    # 14. Запускает тесты с Allure (исправленная команда)
     - name: Run tests with Allure
       run: |
+        echo "=== RUNNING TESTS ==="
         mkdir -p allure-results
-        pytest tests/ --alluredir=allure-results --clean-alluredir -v
+        pytest tests/ -v --alluredir=allure-results
 
-    # 14. Генерирует отчет Allure
+    # 15. Генерирует отчет Allure
     - name: Generate Allure report
       if: always()
       run: |
+        echo "=== GENERATING ALLURE REPORT ==="
         allure generate allure-results -o allure-report --clean
 
-    # 15. Сохраняет отчет
+    # 16. Сохраняет отчет
     - name: Upload Allure report
       if: always()
       uses: actions/upload-artifact@v4
@@ -123,3 +123,9 @@ jobs:
         name: allure-report
         path: allure-report/
         retention-days: 30
+
+    # 17. Останавливает сервисы
+    - name: Stop services
+      if: always()
+      run: |
+        docker-compose down
