@@ -1,5 +1,4 @@
 import allure
-
 from logger.logger import Logger
 from services.university.university_service import UniversityService
 from faker import Faker
