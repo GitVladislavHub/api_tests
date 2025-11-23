@@ -56,18 +56,40 @@ jobs:
     - name: Verify Allure installation
       run: allure --version
 
-    # 9. Запускает сервисы через docker-compose
+    # 9. СОЗДАЕТ .env ФАЙЛ С ПЕРЕМЕННЫМИ ОКРУЖЕНИЯ
+    - name: Create environment file
+      run: |
+        cat > .env << EOF
+        POSTGRES_USER=postgres
+        POSTGRES_PASSWORD=password
+        POSTGRES_DB_AUTH=auth_db
+        POSTGRES_DB_UNIVERSITY=university_db
+        UNIVERSITY_SERVICE_INTERNAL_URL=http://university:8000
+        UNIVERSITY_SERVICE_API_URL=http://localhost:8001
+        AUTH_SERVICE_INTERNAL_URL=http://auth:8000
+        AUTH_SERVICE_API_URL=http://localhost:8000
+        EOF
+        
+        echo "Created .env file:"
+        cat .env
+
+    # 10. Запускает сервисы через docker-compose
     - name: Start services with Docker Compose
       run: |
         docker-compose up -d
 
-    # 10. Ждет 30 секунд пока сервисы запустятся
+    # 11. Ждет пока сервисы запустятся (УЛУЧШЕННАЯ ВЕРСИЯ)
     - name: Wait for services to be ready
       run: |
         echo "Waiting for services to be ready..."
-        sleep 30
+        # Ждем здорового состояния PostgreSQL
+        timeout 60s bash -c 'until docker-compose ps | grep postgres | grep -q "healthy"; do sleep 5; echo "Waiting for PostgreSQL..."; done'
+        # Дополнительное время для приложений
+        sleep 15
+        echo "Services status:"
+        docker-compose ps
 
-    # 11. Запускает тесты с Allure
+    # 12. Запускает тесты с Allure
     - name: Run API tests with Allure
       run: |
         mkdir -p allure-results
@@ -78,13 +100,13 @@ jobs:
         echo "Allure results files:"
         ls -la allure-results/
 
-    # 12. Генерирует HTML отчет
+    # 13. Генерирует HTML отчет
     - name: Generate Allure report
       run: |
         allure generate allure-results -o allure-report --clean
         echo "Allure report generated successfully!"
 
-    # 13. Сохраняет сырые результаты тестов
+    # 14. Сохраняет сырые результаты тестов
     - name: Upload Allure results
       uses: actions/upload-artifact@v4
       with:
@@ -92,7 +114,7 @@ jobs:
         path: allure-results/
         retention-days: 30
 
-    # 14. Сохраняет HTML отчет
+    # 15. Сохраняет HTML отчет
     - name: Upload Allure report
       uses: actions/upload-artifact@v4
       with:
