@@ -2,9 +2,9 @@ name: API Tests with Allure
 
 on:
   pull_request:
-    branches: [ main, develop ]
+    branches: [ main, develop, task_1_api ] 
   push:
-    branches: [ main ]
+    branches: [ main, task_1_api ] 
     
 jobs:
   test:
