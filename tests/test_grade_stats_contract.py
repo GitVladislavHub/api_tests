@@ -20,4 +20,4 @@ class TestGradeStatsContract:
 
         response = grade_stats_helper.get_grades_stats()
 
-        assert response.status_code == 401, f"Actual: {response.status_code}, Expected 401"
+        assert response.status_code == 403, f"Actual: {response.status_code}, Expected 403"
