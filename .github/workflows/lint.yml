@@ -124,8 +124,3 @@ jobs:
         path: allure-report/
         retention-days: 30
 
-    # 17. Останавливает сервисы ПОСЛЕ генерации отчета
-    - name: Stop services
-      if: always()
-      run: |
-        docker-compose down
