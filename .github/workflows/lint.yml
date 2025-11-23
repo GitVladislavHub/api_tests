@@ -89,14 +89,16 @@ jobs:
         echo "Services status:"
         docker-compose ps
 
-    # 12. Запускает тесты с Allure
+ # 12. Запускает тесты с Allure (ИСПРАВЛЕННАЯ ВЕРСИЯ)
     - name: Run API tests with Allure
       run: |
         mkdir -p allure-results
-        pytest tests/ \
+        # Запускаем тесты из папки tests
+        python -m pytest tests/ \
           --alluredir=allure-results \
           --clean-alluredir \
-          -v
+          -v \
+          --import-mode=append
         echo "Allure results files:"
         ls -la allure-results/
 
