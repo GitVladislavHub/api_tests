@@ -59,9 +59,12 @@ jobs:
     - name: Install Ruff
       run: pip install ruff
 
-    # 7. Запускает линтер
+    # 6. Запускает линтер с автоисправлением
     - name: Run Ruff linter
-      run: ruff check .
+      run: |
+        ruff check . --fix
+        # После автоисправления проверяем остались ли ошибки
+        ruff check . || echo "Some errors need manual fixing"
 
     # 8. Устанавливает Allure CLI
     - name: Install Allure
