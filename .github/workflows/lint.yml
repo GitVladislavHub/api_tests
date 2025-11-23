@@ -73,9 +73,22 @@ jobs:
     # 10. Ждет запуска сервисов
     - name: Wait for services
       run: |
-        sleep 30
+        sleep 10
 
-    # 11. Запускает тесты с Allure
+    # 11. ДИАГНОСТИКА - проверим что именно видит pytest
+    - name: Debug tests folder
+      run: |
+        echo "=== CHECKING TESTS FOLDER ==="
+        pwd
+        echo "Tests folder exists: $(ls -la tests/ | head -10)"
+        echo ""
+        echo "=== PYTEST DISCOVERY ==="
+        python -m pytest tests/ --collect-only
+        echo ""
+        echo "=== FILES IN TESTS ==="
+        find tests/ -name "*.py" -type f
+
+    # 12. Запускает тесты с Allure
     - name: Run tests with Allure
       run: |
         mkdir -p allure-results
