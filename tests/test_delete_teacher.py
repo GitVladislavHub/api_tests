@@ -1,7 +1,7 @@
 import allure
 from allure_commons.types import Severity
 
-from conftest import create_teacher
+from tests.conftest import create_teacher
 from logger.logger import Logger
 from services.university.university_service import UniversityService
 from utils.allure_tags import AllureTag
