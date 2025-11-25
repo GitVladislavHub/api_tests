@@ -1,11 +1,10 @@
 name: API Tests with Allure
 
+# Запуск для всех веток
 on:
   push:
-    branches: [ task_1_api, develop ]
   pull_request:
-    branches: [ task_1_api, develop ]
-    
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -15,51 +14,32 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    # 2. Очищаем предыдущие результаты
-    - name: Clean previous reports
-      run: |
-        echo "=== CLEANING PREVIOUS RESULTS ==="
-        rm -rf allure-results allure-report
-
-    # 3. ДИАГНОСТИКА - проверяем структуру проекта
-    - name: Debug project structure
-      run: |
-        echo "=== CURRENT BRANCH ==="
-        git branch --show-current
-        echo "=== PROJECT STRUCTURE ==="
-        pwd
-        ls -la
-        echo "=== TESTS FOLDER CONTENT ==="
-        ls -la tests/ || echo "Tests folder not found"
-
-    # 4. Устанавливает Docker Compose
+    # 2. Устанавливает Docker Compose
     - name: Set up Docker Compose
-      run: |
-        sudo curl -L "https://github.com/docker/compose/releases/download/v2.24.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-        sudo chmod +x /usr/local/bin/docker-compose
+      uses: docker/setup-compose-action@v3
 
-    # 5. Устанавливает Python
+    # 3. Устанавливает Python
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.11'
+        python-version: '3.12'
 
-    # 6. Устанавливает зависимости
+    # 4. Устанавливает зависимости
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         pip install allure-pytest
 
-    # 7. Устанавливает Ruff
+    # 5. Устанавливает Ruff
     - name: Install Ruff
       run: pip install ruff
 
-    # 8. Запускает линтер
+    # 6. Запускает линтер
     - name: Run Ruff linter
       run: ruff check . --fix
 
-    # 9. Устанавливает Allure
+    # 7. Устанавливает Allure
     - name: Install Allure
       run: |
         sudo apt-get update
@@ -69,53 +49,47 @@ jobs:
         sudo mv allure-2.27.0 /opt/allure
         sudo ln -sf /opt/allure/bin/allure /usr/bin/allure
 
-    # 10. Создает .env файл
+    # 8. Создает .env файл
     - name: Create environment file
       run: |
         cat > .env << EOF
-        POSTGRES_USER=postgres
-        POSTGRES_PASSWORD=password
-        POSTGRES_DB_AUTH=auth_db
-        POSTGRES_DB_UNIVERSITY=university_db
-        UNIVERSITY_SERVICE_INTERNAL_URL=http://university:8000
-        UNIVERSITY_SERVICE_API_URL=http://localhost:8001
-        AUTH_SERVICE_INTERNAL_URL=http://auth:8000
-        AUTH_SERVICE_API_URL=http://localhost:8000
+        POSTGRES_USER=${{ vars.POSTGRES_USER || 'postgres' }}
+        POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD || 'password' }}
+        POSTGRES_DB_AUTH=${{ vars.POSTGRES_DB_AUTH || 'auth_db' }}
+        POSTGRES_DB_UNIVERSITY=${{ vars.POSTGRES_DB_UNIVERSITY || 'university_db' }}
+        UNIVERSITY_SERVICE_INTERNAL_URL=${{ vars.UNIVERSITY_SERVICE_INTERNAL_URL || 'http://university:8000' }}
+        UNIVERSITY_SERVICE_API_URL=${{ vars.UNIVERSITY_SERVICE_API_URL || 'http://localhost:8001' }}
+        AUTH_SERVICE_INTERNAL_URL=${{ vars.AUTH_SERVICE_INTERNAL_URL || 'http://auth:8000' }}
+        AUTH_SERVICE_API_URL=${{ vars.AUTH_SERVICE_API_URL || 'http://localhost:8000' }}
         EOF
 
-    # 11. Запускает сервисы
+    # 9. Запускает сервисы
     - name: Start services
       run: |
         docker-compose up -d
-
-    # 12. Ждет запуска сервисов
-    - name: Wait for services
-      run: |
-        sleep 30
-
-    # 13. Проверяем доступность сервисов
-    - name: Check services health
-      run: |
-        echo "=== CHECKING SERVICES ==="
-        docker-compose ps
-        echo "=== CHECKING PORTS ==="
-        netstat -tulpn | grep :800 || echo "No services on port 800"
-
-    # 14. Запускает тесты с Allure
+        
+    # 10. Запускает тесты с Allure
     - name: Run tests with Allure
       run: |
         echo "=== RUNNING TESTS ==="
         mkdir -p allure-results
         pytest tests/ -v --alluredir=allure-results
 
-    # 15. Генерирует отчет Allure ПЕРЕД остановкой сервисов
+    # 11. Останавливает сервисы ПОСЛЕ тестов
+    - name: Stop services
+      if: always()
+      run: |
+        echo "=== STOPPING SERVICES ==="
+        docker-compose down
+
+    # 12. Генерирует отчет Allure
     - name: Generate Allure report
       if: always()
       run: |
         echo "=== GENERATING ALLURE REPORT ==="
         allure generate allure-results -o allure-report --clean
 
-    # 16. Сохраняет отчет
+    # 13. Сохраняет отчет
     - name: Upload Allure report
       if: always()
       uses: actions/upload-artifact@v4
@@ -123,4 +97,3 @@ jobs:
         name: allure-report
         path: allure-report/
         retention-days: 30
-
