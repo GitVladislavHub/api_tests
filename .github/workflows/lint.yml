@@ -14,9 +14,11 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    # 2. Устанавливает Docker Compose
+  # 2. Устанавливает Docker Compose
     - name: Set up Docker Compose
       uses: docker/setup-compose-action@v3
+      with:
+        version: 'v2.32.4'
 
     # 3. Устанавливает Python
     - name: Set up Python
