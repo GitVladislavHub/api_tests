@@ -5,15 +5,16 @@ on:
   pull_request:
 
 jobs:
+  scan:
+    uses: ./.github/workflows/scan-job.yml
+    secrets: inherit
+
   test:
+    needs: scan
     uses: ./.github/workflows/test-job.yml
     secrets: inherit
     with:
       python-version: '3.12'
-
-  scan:
-    uses: ./.github/workflows/scan-job.yml
-    secrets: inherit
 
   results:
     needs: [test, scan]
