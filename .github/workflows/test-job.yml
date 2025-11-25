@@ -51,7 +51,7 @@ jobs:
         run: |
           echo "=== RUNNING TESTS ==="
           mkdir -p allure-results
-          pytest tests/ -v --alluredir=allure-results
+          python -m pytest tests/ -v --alluredir=allure-results
 
       - name: Stop services
         if: always()
