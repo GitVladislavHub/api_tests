@@ -6,16 +6,16 @@ on:
 
 jobs:
   test:
-    uses: ./.github/workflows/jobs/test.yml
+    uses: ./.github/workflows/test.yml
     secrets: inherit
     with:
       python-version: '3.12'
 
   scan:
-    uses: ./.github/workflows/jobs/scan.yml
+    uses: ./.github/workflows/scan.yml
     secrets: inherit
 
   results:
     needs: [test, scan]
-    uses: ./.github/workflows/jobs/results.yml
+    uses: ./.github/workflows/results.yml
     secrets: inherit
